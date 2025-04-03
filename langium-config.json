@@ -1,0 +1,15 @@
+{
+    "projectName": "Ovelha",
+    "languages": [{
+        "id": "ovelha",
+        "grammar": "src/language/ovelha.langium",
+        "fileExtensions": [".ov"],
+        "textMate": {
+            "out": "syntaxes/ovelha.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "src/syntaxes/ovelha.monarch.ts"
+        }
+    }],
+    "out": "src/language/generated"
+}
