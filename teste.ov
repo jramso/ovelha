@@ -1,0 +1,9 @@
+class Pessoa {
+    int idade;
+    string nome;
+}
+
+class Pet {
+    string especie;
+    int idade;
+}
