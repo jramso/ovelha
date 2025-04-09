@@ -4,9 +4,9 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { extractDestinationAndName } from './cli-util.js';
 
-export function generateJava(model: Model, filePath: string, destination: string | undefined): string {
+export function generateJava(model: Model, filePath: string, destination: string | undefined): void {
     const data = extractDestinationAndName(filePath, destination);
-    const generatedFilePath = `${path.join(data.destination, data.name)}.java`;
+    //const generatedFilePath = `${path.join(data.destination, data.name)}.java`;
 
     // const fileNode = expandToNode`
     //     "use strict"; 
@@ -22,8 +22,16 @@ export function generateJava(model: Model, filePath: string, destination: string
         return `public class ${nomeClasse} {\n${campos}\n}`;
     };
 
-    // Gera o código para todas as classes
-    const fileContent = model.classes.map(cls => gerarClassesJava(cls.name, cls.features)).join('\n\n');
+    // Gera o código para todas as classes (aqui ele gera as classes no mesmo arquivo)
+    //const fileContent = model.classes.map(cls => gerarClassesJava(cls.name, cls.features)).join('\n\n');
+
+
+    model.classes.forEach(cls => {
+        const fileContent = gerarClassesJava(cls.name, cls.features);
+        const generatedFilePath = path.join(data.destination, `${cls.name}.java`);
+        fs.writeFileSync(generatedFilePath, fileContent);
+        console.log(`Arquivo Java gerado: ${generatedFilePath}`);
+    });
 
     // Cria o diretório de destino se ele não existir
     if (!fs.existsSync(data.destination)) {
@@ -31,6 +39,6 @@ export function generateJava(model: Model, filePath: string, destination: string
     }
 
     // Escreve o arquivo gerado
-    fs.writeFileSync(generatedFilePath, fileContent);
-    return generatedFilePath;    
+    //fs.writeFileSync(generatedFilePath, fileContent);
+    //return generatedFilePath;    
 }

@@ -23,7 +23,9 @@ Attribute:
 // Parameter:
 //     type = Type name=ID;
 
-Type returns string:('int' | 'string' | 'boolean' | 'float' | 'double');
+//type = tipos primitivos + String (String é do java.lang que é nativo mas nao primitivo)
+Type returns string:
+    ('int' | 'String' | 'boolean' | 'float' | 'double' | 'char' | 'byte' | 'short' | 'long');
 
 // Visibility:
 //   '-' |'+'|'#';
