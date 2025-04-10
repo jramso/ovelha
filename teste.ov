@@ -1,4 +1,4 @@
 class Pessoa {
     int idade
-    string nome
+    String nome
 }

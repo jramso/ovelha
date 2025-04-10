@@ -4,7 +4,8 @@ import { Command } from 'commander';
 import { OvelhaLanguageMetaData } from '../language/generated/module.js';
 import { createOvelhaServices } from '../language/ovelha-module.js';
 import { extractAstNode } from './cli-util.js';
-import { generateJava } from './generator.js';
+//import { generateJava } from './basicJavagenerator.js';
+import { generateSpringBootProject } from './backend/java/springboot/entity/springboot-generator.js';
 import { NodeFileSystem } from 'langium/node';
 import * as url from 'node:url';
 import * as fs from 'node:fs/promises';
@@ -17,12 +18,12 @@ const packageContent = await fs.readFile(packagePath, 'utf-8');
 export const generateAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
     const services = createOvelhaServices(NodeFileSystem).Ovelha;
     const model = await extractAstNode<Model>(fileName, services);
-    const generatedFilePath = generateJava(model, fileName, opts.destination);
+    const generatedFilePath = generateSpringBootProject(model, fileName, opts.destination);
     console.log(chalk.green(`JavaScript code generated successfully: ${generatedFilePath}`));
 };
 
 export type GenerateOptions = {
-    destination?: string;
+    destination: string;
 }
 
 export default function(): void {
