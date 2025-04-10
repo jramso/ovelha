@@ -1,4 +1,10 @@
 class Pessoa {
     int idade
-    string nome
+    String nome
 }
+
+class Pet{
+    String raca
+    String nome
+}
+

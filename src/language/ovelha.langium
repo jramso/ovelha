@@ -23,7 +23,7 @@ Attribute:
 // Parameter:
 //     type = Type name=ID;
 
-Type returns string:('int' | 'string' | 'boolean' | 'float' | 'double');
+Type returns string:('int' | 'String' | 'boolean' | 'float' | 'double');
 
 // Visibility:
 //   '-' |'+'|'#';
