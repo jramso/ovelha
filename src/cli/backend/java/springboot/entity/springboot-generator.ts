@@ -92,8 +92,8 @@ spring.application.name=projetospring
 }
 
 function generateSpringBootApplicationClass(projectPath: string, projectName: string): void {
-    const className = capitalize(projectName);
-    const packagePath = 'com.exemplo.projetospring';
+    const className = capitalize(projectName.substring(0, projectName.lastIndexOf("."))); //nome do projeto sem o .ov e começando em maiuscula
+    const packagePath = 'com.ifes.projetospring';
     const content = `
 package ${packagePath};
 
@@ -116,22 +116,61 @@ function generateModelClasses(model: Model, projectPath: string, projectName: st
     const packagePath = 'com.ifes.projetospring.model';
     const modelDir = path.join(projectPath, 'src/main/java/com/ifes/projetospring/model');
 
-    model.classes.forEach(cls => {
-        const fields = cls.features
-            .filter(feature => feature.$type === 'Attribute')
-            .map(attr => `    private ${attr.type} ${attr.name};`)
-            .join('\n');
+    // Cria o diretório se ele não existir
+    if (!fs.existsSync(modelDir)) {
+        fs.mkdirSync(modelDir, { recursive: true });
+    }
 
+    // Itera sobre cada classe no modelo
+    model.classes.forEach(cls => {
+        let fieldsContent = ''; // Conteúdo dos atributos
+        let methodsContent = ''; // Conteúdo dos métodos
+
+        // Gera os campos (atributos privados)
+        cls.features
+            .filter(feature => feature.$type === 'Attribute') // Filtra apenas os atributos
+            .forEach(attr => {
+                fieldsContent += `    private ${attr.type} ${attr.name};\n`;
+            });
+
+        // Gera os métodos
+        cls.features
+            .filter(feature => feature.$type === 'Method') // Filtra apenas os métodos
+            .forEach(feature => {
+                // Verifica explicitamente que estamos lidando com um Method
+                if (feature.$type === 'Method') {
+                    const method = feature; // TypeScript agora sabe que `method` é do tipo `Method`
+
+                    // Processa os parâmetros do método (se houver)
+                    const parameters = method.parameters?.parameters
+                        ?.map((param: { type: string; name: string }) => `${param.type} ${param.name}`)
+                        .join(', ') || '';
+
+                    methodsContent += `
+    public ${method.type} ${method.name}(${parameters}) {
+        // TODO: Implementar método
+        
+    }\n`;
+                }
+            });
+
+        // Monta o conteúdo completo da classe
         const content = `
 package ${packagePath};
 
 public class ${cls.name} {
-${fields}
+${fieldsContent}
+
+${methodsContent}
 }
         `;
 
-        fs.writeFileSync(path.join(modelDir, `${cls.name}.java`), content);
+        // Escreve o arquivo Java
+        const filePath = path.join(modelDir, `${cls.name}.java`);
+        fs.writeFileSync(filePath, content);
     });
+
+    console.log(`Classes geradas com sucesso em: ${modelDir}`);
 }
 
 function capitalize(str: string): string {
