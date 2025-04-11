@@ -8,8 +8,3 @@ class Pet {
     String especie
     int idade
 }
-
-class Pet {
-    String especie
-    int idade
-}
