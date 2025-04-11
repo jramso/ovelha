@@ -9,21 +9,23 @@ Classe:
     '}';
 
 Feature:
-    Attribute;
+    Attribute | Method;
 
 Attribute:
     type = Type name=ID;
 
-// Method:
-//     type = Type name=ID '(' parameters=ParemeterList? ')';
+Method:
+    type = Type name=ID '(' (parameters= ParemeterList)? ')';
 
-// ParemeterList:
-//     parameters+=Parameter (',' parameters+=Parameter)*; //
+ParemeterList:
+    parameters+=Parameter (',' parameters+=Parameter)*; //
 
-// Parameter:
-//     type = Type name=ID;
+Parameter:
+   type = Type name=ID;
 
-Type returns string:('int' | 'String' | 'boolean' | 'float' | 'double');
+//type = tipos primitivos + String (String é do java.lang que é nativo mas nao primitivo)
+Type returns string:
+    ('int' | 'String' | 'boolean' | 'float' | 'double' | 'char' | 'byte' | 'short' | 'long');
 
 // Visibility:
 //   '-' |'+'|'#';
