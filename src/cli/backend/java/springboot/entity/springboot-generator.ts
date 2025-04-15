@@ -5,10 +5,8 @@ import * as path from 'node:path';
 export function generateSpringBootProject(model: Model, projectName: string, destination: string): void {
     const projectPath = path.join(destination, projectName);
 
-    // Cria a estrutura de diretórios
     createDirectoryStructure(projectPath);
 
-    // Gera o arquivo pom.xml
     generatePomXml(projectPath);
 
     // Gera o arquivo application.properties
@@ -17,7 +15,6 @@ export function generateSpringBootProject(model: Model, projectName: string, des
     // Gera a classe principal do Spring Boot
     generateSpringBootApplicationClass(projectPath, projectName);
 
-    // Gera as classes do modelo
     generateModelClasses(model, projectPath, projectName);
 
     console.log(`Projeto Spring Boot gerado com sucesso: ${projectPath}`);
