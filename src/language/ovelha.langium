@@ -27,9 +27,6 @@ Parameter:
 Type returns string:
     ('int' | 'String' | 'boolean' | 'float' | 'double' | 'char' | 'byte' | 'short' | 'long');
 
-Visibility returns string:
-    'public' |'private'|'protected';
-
 hidden terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][\w_]*/;
 terminal INT returns number: /[0-9]+/;
