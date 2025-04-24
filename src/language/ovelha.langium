@@ -12,7 +12,7 @@ Feature:
     Attribute | Method;
 
 Attribute:
-    type = Type name=ID visibility = Visibility;
+    type = Type name=ID;
 
 Method:
     type = Type name=ID '(' (parameters= ParemeterList)? ')';
