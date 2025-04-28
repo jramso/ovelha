@@ -57,14 +57,15 @@ hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
 ### 1.3 Exemplo de Arquivo `.ov`
 
 ```ov
-classe Pessoa {
-  String nome;
-  int idade;
-  metodo void falar();
+class Pessoa {
+    int idade
+    String nome
+    int somaIdade(int idade)
 }
 
-enum Sexo {
-  MASCULINO, FEMININO
+class Pet {
+    String especie
+    int idade
 }
 ```
 
@@ -87,7 +88,7 @@ enum Sexo {
         
     - Gera: `controller/NomeDaClasseController.java`
         
-- Para cada `enum`:
+- Para cada possivel [Futuro] `enum`:
     
     - Gera: `domain/NomeDoEnum.java`
         
@@ -204,4 +205,4 @@ public class PessoaController {
 
 ## Conclusão
 
-Com essa abordagem, você consegue modelar sua aplicação de forma simples e gerar uma estrutura robusta automaticamente. A divisão clara entre a DSL e o código Java gerado permite manutenção, testes e expansão facilitadas.
+Com essa estrutura, você consegue modelar sua aplicação de forma simples e gerar uma estrutura robusta automaticamente. A divisão clara entre a DSL e o código Java gerado permite manutenção, testes e expansão facilitadas.
