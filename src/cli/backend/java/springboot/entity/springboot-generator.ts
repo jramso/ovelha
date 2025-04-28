@@ -1,6 +1,7 @@
 import type { Model } from '../../../../../language/generated/ast.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { generateDomain } from './domain_generator.js';
 
 export function generateSpringBootProject(model: Model, projectName: string, destination: string): void {
     const projectPath = path.join(destination, projectName);
@@ -15,7 +16,8 @@ export function generateSpringBootProject(model: Model, projectName: string, des
     // Gera a classe principal do Spring Boot
     generateSpringBootApplicationClass(projectPath, projectName);
 
-    generateModelClasses(model, projectPath, projectName);
+    //Gera toda a parte de dominio | domain_generator.ts
+    generateDomain(model,projectPath,projectName);
 
     console.log(`Projeto Spring Boot gerado com sucesso: ${projectPath}`);
 }
@@ -53,14 +55,30 @@ function generatePomXml(projectPath: string): void {
     </parent>
 
     <dependencies>
+        <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
+        <!-- Dependencia de teste -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Data JPA -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- PostgreSQL Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -109,66 +127,7 @@ public class ${className}Application {
     fs.writeFileSync(filePath, content);
 }
 
-function generateModelClasses(model: Model, projectPath: string, projectName: string): void {
-    const packagePath = 'com.ifes.projetospring.model';
-    const modelDir = path.join(projectPath, 'src/main/java/com/ifes/projetospring/model');
 
-    // Cria o diretório se ele não existir
-    if (!fs.existsSync(modelDir)) {
-        fs.mkdirSync(modelDir, { recursive: true });
-    }
-
-    // Itera sobre cada classe no modelo
-    model.classes.forEach(cls => {
-        let fieldsContent = ''; // Conteúdo dos atributos
-        let methodsContent = ''; // Conteúdo dos métodos
-
-        // Gera os campos (atributos privados)
-        cls.features
-            .filter(feature => feature.$type === 'Attribute') // Filtra apenas os atributos
-            .forEach(attr => {
-                fieldsContent += `    private ${attr.type} ${attr.name};\n`;
-            });
-
-        // Gera os métodos
-        cls.features
-            .filter(feature => feature.$type === 'Method') // Filtra apenas os métodos
-            .forEach(feature => {
-                // Verifica explicitamente que estamos lidando com um Method
-                if (feature.$type === 'Method') {
-                    const method = feature; // TypeScript agora sabe que `method` é do tipo `Method`
-
-                    // Processa os parâmetros do método (se houver)
-                    const parameters = method.parameters?.parameters
-                        ?.map((param: { type: string; name: string }) => `${param.type} ${param.name}`)
-                        .join(', ') || '';
-
-                    methodsContent += `
-    public ${method.type} ${method.name}(${parameters}) {
-        // TODO: Implementar método
-        
-    }\n`;
-                }
-            });
-
-        // Monta o conteúdo completo da classe
-        const content = `
-package ${packagePath};
-
-public class ${cls.name} {
-${fieldsContent}
-
-${methodsContent}
-}
-        `;
-
-        // Escreve o arquivo Java
-        const filePath = path.join(modelDir, `${cls.name}.java`);
-        fs.writeFileSync(filePath, content);
-    });
-
-    console.log(`Classes geradas com sucesso em: ${modelDir}`);
-}
 
 function capitalize(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
