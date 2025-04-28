@@ -25,16 +25,33 @@ function generateModelClasses(model: Model, projectPath: string, projectName: st
     // Itera sobre cada classe no modelo
     model.classes.forEach(cls => {
         let fieldsContent = ''; // Conteúdo dos atributos
-        let methodsContent = ''; // Conteúdo dos métodos
+        let methodsContent = ''; // Conteúdo dos métodos (incluindo getters e setters)
 
         // Gera os campos (atributos privados)
         cls.features
             .filter(feature => feature.$type === 'Attribute') // Filtra apenas os atributos
             .forEach(attr => {
-                fieldsContent += `    private ${attr.type} ${attr.name};\n`;
+                // Adiciona validações e anotações específicas para JPA
+                const annotations = getJpaAnnotations(attr);
+
+                fieldsContent += `
+    ${annotations}
+    private ${attr.type} ${attr.name};
+`;
+
+                // Gera os getters e setters
+                methodsContent += `
+    public ${attr.type} get${capitalizeFirstLetter(attr.name)}() {
+        return this.${attr.name};
+    }
+
+    public void set${capitalizeFirstLetter(attr.name)}(${attr.type} ${attr.name}) {
+        this.${attr.name} = ${attr.name};
+    }
+`;
             });
 
-        // Gera os métodos
+        // Gera os métodos adicionais (se houver)
         cls.features
             .filter(feature => feature.$type === 'Method') // Filtra apenas os métodos
             .forEach(feature => {
@@ -50,8 +67,8 @@ function generateModelClasses(model: Model, projectPath: string, projectName: st
                     methodsContent += `
     public ${method.type} ${method.name}(${parameters}) {
         // TODO: Implementar método
-        
-    }\n`;
+    }
+`;
                 }
             });
 
@@ -59,8 +76,21 @@ function generateModelClasses(model: Model, projectPath: string, projectName: st
         const content = `
 package ${packagePath};
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
+@Entity
+@Table(name = "TB_${cls.name.toUpperCase()}", schema = "DBSIS")
 public class ${cls.name} {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
 ${fieldsContent}
+
+    public ${cls.name}() {
+    }
 
 ${methodsContent}
 }
@@ -72,6 +102,26 @@ ${methodsContent}
     });
 
     console.log(`Classes geradas com sucesso em: ${modelDir}`);
+}
+
+// Função auxiliar para capitalizar a primeira letra de uma string
+function capitalizeFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Função para gerar anotações JPA com base no tipo do atributo
+function getJpaAnnotations(attr: { type: string; name: string }): string {
+    const annotations: string[] = [];
+
+    // Adiciona anotações de validação com base no tipo do atributo
+    if (attr.type === 'String') {
+        annotations.push('@NotBlank');
+    } else if (attr.type === 'int' || attr.type === 'Integer') {
+        annotations.push('@Min(0)');
+        annotations.push('@Max(100)');
+    }
+
+    return annotations.join('\n    ');
 }
 
 function generateRepositoryClasses(model: Model, projectPath: string, projectName: string): void {
