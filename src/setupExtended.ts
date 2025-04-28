@@ -12,7 +12,7 @@ export const setupConfigExtended = (): UserConfig => {
             editorAppConfig: {
                 $type: 'extended',
                 languageId: 'ovelha',
-                code: `// ovelha is running in the web!`,
+                code: `// Ovelha is running in the web!`,
                 useDiffEditor: false,
                 extensions: [{
                     config: {
