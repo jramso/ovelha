@@ -9,7 +9,7 @@ Class:
     '}';
 
 Feature:
-    Attribute | Method;
+    Attribute | Method | Constructor;
 
 Attribute:
     type = Type name=ID ';';
@@ -22,6 +22,20 @@ ParemeterList:
 
 Parameter:
     type = Type name=ID;
+
+//Construtor com os possiveis parametros e as inicializacoes
+Constructor:
+    name=ID '(' (parameters= ParemeterList)? ')' '{'
+        (initializers=AttributeInitializationList)
+    '}';
+
+//Lista de atributos inicializados
+AttributeInitializationList:
+    initializers+=AttributeInitialization (';' initializers+=AttributeInitialization)*;
+
+//Inicializacao do atributo utilizando o this
+AttributeInitialization:
+    'this.'name=ID '=' ID;
 
 //type = tipos primitivos + String (String é do java.lang que é nativo mas nao primitivo)
 Type returns string:
