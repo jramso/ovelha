@@ -1,9 +1,9 @@
 grammar Ovelha
 
 entry Model:
-    (classes+=Classe)+;
+    (classes+=Class)+;
 
-Classe:
+Class:
     'class' name=ID '{'
         features+= Feature*
     '}';
@@ -12,23 +12,20 @@ Feature:
     Attribute | Method;
 
 Attribute:
-    type = Type name=ID;
+    type = Type name=ID ';';
 
 Method:
     type = Type name=ID '(' (parameters= ParemeterList)? ')';
 
 ParemeterList:
-    parameters+=Parameter (',' parameters+=Parameter)*; //
+    parameters+=Parameter (',' parameters+=Parameter)*;
 
 Parameter:
-   type = Type name=ID;
+    type = Type name=ID;
 
 //type = tipos primitivos + String (String é do java.lang que é nativo mas nao primitivo)
 Type returns string:
     ('int' | 'String' | 'boolean' | 'float' | 'double' | 'char' | 'byte' | 'short' | 'long');
-
-// Visibility:
-//   '-' |'+'|'#';
 
 hidden terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][\w_]*/;

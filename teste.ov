@@ -1,10 +1,4 @@
-class Pessoa {
-    int idade
-    String nome
-    int somaIdade(int idade)
-}
+person A
+person B
 
-class Pet {
-    String especie
-    int idade
-}
+Hello A!
