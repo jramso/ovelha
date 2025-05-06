@@ -19,7 +19,7 @@ export const generateAction = async (fileName: string, opts: GenerateOptions): P
     const services = createOvelhaServices(NodeFileSystem).Ovelha;
     const model = await extractAstNode<Model>(fileName, services);
     const generatedFilePath = generateSpringBootProject(model, fileName, String(opts.destination));
-    console.log(chalk.green(`JavaScript code generated successfully: ${generatedFilePath}`));
+    console.log(chalk.green(`Java code generated successfully: ${generatedFilePath}`));
 };
 
 export type GenerateOptions = {
@@ -36,7 +36,7 @@ export default function(): void {
         .command('generate')
         .argument('<file>', `source file (possible file extensions: ${fileExtensions})`)
         .option('-d, --destination <dir>', 'destination directory of generating')
-        .description('generates JavaScript code that prints "Hello, {name}!" for each greeting in a source file')
+        .description('generates Java code Backend RestFul in MVC + Modular Architeture')
         .action(generateAction);
 
     program.parse(process.argv);

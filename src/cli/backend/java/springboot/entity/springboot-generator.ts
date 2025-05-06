@@ -2,6 +2,7 @@ import type { Model } from '../../../../../language/generated/ast.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { generateDomain } from './domain_generator.js';
+import { generateControllers } from '../api/route_generator.js';
 
 export function generateSpringBootProject(model: Model, projectName: string, destination: string): void {
     const projectPath = path.join(destination, projectName);
@@ -18,6 +19,9 @@ export function generateSpringBootProject(model: Model, projectName: string, des
 
     //Gera toda a parte de dominio | domain_generator.ts
     generateDomain(model,projectPath,projectName);
+
+    //
+    generateControllers(model,projectPath,projectName);
 
     console.log(`Projeto Spring Boot gerado com sucesso: ${projectPath}`);
 }
@@ -86,6 +90,11 @@ function generatePomXml(projectPath: string): void {
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -104,12 +113,45 @@ function generatePomXml(projectPath: string): void {
 
 function generateApplicationProperties(projectPath: string): void {
     const propertiesContent = `
-# Configurações do Spring Boot
+# Configurações do Servidor
 server.port=8080
-spring.application.name=projetospring
-    `;
 
-    fs.writeFileSync(path.join(projectPath, 'src/main/resources/application.properties'), propertiesContent);
+# Nome da Aplicação
+spring.application.name=projetospring
+
+# Configurações do Banco de Dados PostgreSQL
+spring.datasource.url=jdbc:postgresql://localhost:5432/seu_banco_de_dados
+spring.datasource.username=seu_usuario
+spring.datasource.password=sua_senha
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# Configurações do JPA
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+
+# Configuração do Schema (opcional)
+spring.jpa.properties.hibernate.default_schema=DBSIS
+
+# Configuração para evitar erros com o Hibernate e UUIDs (caso use UUIDs como ID)
+spring.jpa.properties.hibernate.id.new_generator_mappings=true
+
+# Configuração para ajustar o timezone do banco de dados
+spring.jpa.properties.hibernate.jdbc.time_zone=UTC
+`;
+
+    // Cria o diretório se ele não existir
+    const resourcesDir = path.join(projectPath, 'src/main/resources');
+    if (!fs.existsSync(resourcesDir)) {
+        fs.mkdirSync(resourcesDir, { recursive: true });
+    }
+
+    // Escreve o arquivo application.properties
+    const filePath = path.join(resourcesDir, 'application.properties');
+    fs.writeFileSync(filePath, propertiesContent);
+
+    console.log(`Arquivo application.properties gerado com sucesso em: ${filePath}`);
 }
 
 function generateSpringBootApplicationClass(projectPath: string, projectName: string): void {
