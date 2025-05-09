@@ -9,7 +9,11 @@ class Pet {
     int idade;
 }
 
-class Pet {
-    String especie;
-    int idade;
+class Agenda {
+    String nomePessoa;
+    int dia;
+    int mes;
+    int ano;
+    int hora;
+    int minutos;
 }
